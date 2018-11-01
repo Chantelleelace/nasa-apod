@@ -1,4 +1,4 @@
-package edu.cnm.deepdive.nasaapod;
+package edu.cnm.deepdive.nasaapod.controller;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +10,15 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import edu.cnm.deepdive.nasaapod.BuildConfig;
+import edu.cnm.deepdive.nasaapod.R;
+import edu.cnm.deepdive.nasaapod.model.Apod;
+import edu.cnm.deepdive.nasaapod.service.ApodService;
 import java.util.Calendar;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,13 +31,15 @@ public class MainActivity extends AppCompatActivity {
   private ProgressBar progressSpinner;
   private FloatingActionButton jumpDate;
   private Calendar calendar;
+  private ApodService service;
+  private Apod apod;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     setupWebView();
-    // TODO Setup service
+    setupService();
     setupUI();
     // TODO Setup defaults
   }
@@ -70,5 +80,49 @@ public class MainActivity extends AppCompatActivity {
     });
   }
 
+  private void setupService() {
+    Gson gson = new GsonBuilder()
+        .excludeFieldsWithoutExposeAnnotation()
+        .setDateFormat(DATE_FORMAT)
+        .create();
+    Retrofit retrofit = new Retrofit.Builder()
+        .baseUrl(getString(R.string.base_url))
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build();
+    service = retrofit.create(ApodService.class);
+    apiKey = BuildConfig.API_KEY;
+  }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
