@@ -1,14 +1,21 @@
 package edu.cnm.deepdive.nasaapod.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 import java.util.Date;
 
-public class Apod implements Parcelable {
+@Entity
+public class Apod implements Serializable {
 
-  public static final Creator CREATOR = new Creator();
+  private static final long serialVersionUID = 2547946263420122184L;
+
+  @ColumnInfo(name = "apod_id")
+  @PrimaryKey(autoGenerate = true)
+  private long id;
 
   @Expose
   private Date date;
@@ -36,6 +43,14 @@ public class Apod implements Parcelable {
   @Expose
   @SerializedName("service_version")
   private String serviceVersion;
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
 
   public Date getDate() {
     return date;
@@ -101,42 +116,4 @@ public class Apod implements Parcelable {
     this.serviceVersion = serviceVersion;
   }
 
-  @Override
-  public int describeContents() {
-    return 0;
-  }
-
-  @Override
-  public void writeToParcel(Parcel dest, int flags) {
-    dest.writeLong(date.getTime());
-    dest.writeString(title);
-    dest.writeString(explanation);
-    dest.writeString(copyright);
-    dest.writeString(url);
-    dest.writeString(mediaType);
-    dest.writeString(hdUrl);
-    dest.writeString(serviceVersion);
-  }
-
-  private static class Creator implements Parcelable.Creator<Apod> {
-
-    @Override
-    public Apod createFromParcel(Parcel source) {
-      Apod apod = new Apod();
-      apod.date = new Date(source.readLong());
-      apod.title = source.readString();
-      apod.explanation = source.readString();
-      apod.copyright = source.readString();
-      apod.url = source.readString();
-      apod.mediaType = source.readString();
-      apod.hdUrl = source.readString();
-      apod.serviceVersion = source.readString();
-      return null;
-    }
-
-    @Override
-    public Apod[] newArray(int size) {
-      return new Apod[size];
-    }
-  }
 }
